@@ -225,7 +225,8 @@ function startGame() {
     const startBtn = document.getElementById('startBtn');
     startBtn.innerHTML = '<span class="btn-icon">⏸</span><span class="btn-label">Running...</span>';
     startBtn.disabled = true;
-    document.getElementById('shareBtn').style.display = 'none';
+    const shareBtn = document.getElementById('shareBtn');
+    shareBtn.style.display = 'none';
     
     generateColors();
     showMessage('🚀 Game Started!', 'success');
@@ -261,7 +262,8 @@ function endGame() {
     const startBtn = document.getElementById('startBtn');
     startBtn.innerHTML = '<span class="btn-icon">▶</span><span class="btn-label">Play Again</span>';
     startBtn.disabled = false;
-    document.getElementById('shareBtn').style.display = 'flex';
+    const shareBtn = document.getElementById('shareBtn');
+    shareBtn.style.display = 'flex';
     
     if (score > bestScore) {
         bestScore = score;
