@@ -12,12 +12,19 @@ let gameStartTime = null;
 let clickCount = 0;
 let correctClicks = 0;
 
+// Bootstrap modal instances
+let leaderboardModal = null;
+let shareModal = null;
+
 // Initialize game
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap modals
+    leaderboardModal = new bootstrap.Modal(document.getElementById('leaderboardModal'));
+    shareModal = new bootstrap.Modal(document.getElementById('shareModal'));
+    
     loadBestScore();
     generateColors();
     setupEventListeners();
-    setupModals();
     updateGlobalLeaderboard();
     updateLocalLeaderboard();
     
@@ -29,70 +36,9 @@ function setupEventListeners() {
     document.getElementById('startBtn').addEventListener('click', startGame);
     document.getElementById('shareBtn').addEventListener('click', showShareModal);
     document.getElementById('leaderboardBtn').addEventListener('click', showLeaderboardModal);
-    document.getElementById('closeLeaderboard').addEventListener('click', hideLeaderboardModal);
-    document.getElementById('closeShare').addEventListener('click', hideShareModal);
-    
-    // Leaderboard tabs
-    document.querySelectorAll('.modal-tab').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            const tabName = this.dataset.tab;
-            
-            document.querySelectorAll('.modal-tab').forEach(function(t) {
-                t.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            document.querySelectorAll('.leaderboard-content').forEach(function(content) {
-                content.classList.remove('active');
-            });
-            
-            if (tabName === 'global') {
-                document.getElementById('globalLeaderboard').classList.add('active');
-            } else {
-                document.getElementById('localLeaderboard').classList.add('active');
-            }
-        });
-    });
     
     // Share buttons
     setupShareButtons();
-    
-    // Close modals on overlay click
-    document.getElementById('leaderboardModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            hideLeaderboardModal();
-        }
-    });
-    
-    document.getElementById('shareModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            hideShareModal();
-        }
-    });
-}
-
-function setupModals() {
-    // Modal functionality
-}
-
-function showLeaderboardModal() {
-    document.getElementById('leaderboardModal').classList.add('active');
-    updateGlobalLeaderboard();
-    updateLocalLeaderboard();
-}
-
-function hideLeaderboardModal() {
-    document.getElementById('leaderboardModal').classList.remove('active');
-}
-
-function showShareModal() {
-    document.getElementById('shareScoreValue').textContent = score;
-    document.getElementById('shareModal').classList.add('active');
-    updateShareLinks();
-}
-
-function hideShareModal() {
-    document.getElementById('shareModal').classList.remove('active');
 }
 
 function setupShareButtons() {
@@ -117,7 +63,7 @@ function updateShareLinks() {
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
         showMessage('📋 Link copied to clipboard!', 'success');
-        hideShareModal();
+        shareModal.hide();
     }).catch(function() {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -126,8 +72,20 @@ function copyToClipboard(text) {
         document.execCommand('copy');
         document.body.removeChild(textarea);
         showMessage('📋 Link copied to clipboard!', 'success');
-        hideShareModal();
+        shareModal.hide();
     });
+}
+
+function showLeaderboardModal() {
+    updateGlobalLeaderboard();
+    updateLocalLeaderboard();
+    leaderboardModal.show();
+}
+
+function showShareModal() {
+    document.getElementById('shareScoreValue').textContent = score;
+    updateShareLinks();
+    shareModal.show();
 }
 
 function generateColors() {
@@ -223,7 +181,7 @@ function startGame() {
     updateTimer();
     
     const startBtn = document.getElementById('startBtn');
-    startBtn.innerHTML = '<span class="btn-icon">⏸</span><span class="btn-label">Running...</span>';
+    startBtn.innerHTML = '<i class="bi bi-pause-fill me-2"></i>Running...';
     startBtn.disabled = true;
     const shareBtn = document.getElementById('shareBtn');
     shareBtn.style.display = 'none';
@@ -260,10 +218,10 @@ function endGame() {
     }
     
     const startBtn = document.getElementById('startBtn');
-    startBtn.innerHTML = '<span class="btn-icon">▶</span><span class="btn-label">Play Again</span>';
+    startBtn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Play Again';
     startBtn.disabled = false;
     const shareBtn = document.getElementById('shareBtn');
-    shareBtn.style.display = 'flex';
+    shareBtn.style.display = 'block';
     
     if (score > bestScore) {
         bestScore = score;
@@ -295,22 +253,24 @@ function updateTimer() {
     timerEl.textContent = timeLeft;
     
     if (timeLeft <= 10) {
-        timerEl.style.color = 'var(--error)';
+        timerEl.style.color = 'var(--bs-danger)';
         timerEl.style.animation = 'pulse 1s infinite';
     } else {
-        timerEl.style.color = '';
+        timerEl.style.color = 'var(--bs-success)';
         timerEl.style.animation = '';
     }
 }
 
 function showMessage(text, type) {
     const messageEl = document.getElementById('message');
-    messageEl.textContent = text;
-    messageEl.className = 'game-feedback ' + (type || '');
+    const messageTextEl = document.getElementById('messageText');
+    
+    messageTextEl.textContent = text;
+    messageEl.className = 'alert alert-dismissible fade show mb-0 alert-' + (type === 'success' ? 'success' : 'danger');
+    messageEl.style.display = 'block';
     
     setTimeout(function() {
-        messageEl.textContent = '';
-        messageEl.className = 'game-feedback';
+        messageEl.style.display = 'none';
     }, 2000);
 }
 
@@ -351,17 +311,19 @@ function updateLocalLeaderboard() {
     listEl.innerHTML = '';
     
     if (finalLeaderboard.length === 0) {
-        listEl.innerHTML = '<div class="loading-state">No scores yet. Be the first!</div>';
+        listEl.innerHTML = '<div class="text-center text-muted py-4">No scores yet. Be the first!</div>';
         return;
     }
     
     finalLeaderboard.forEach(function(entry, index) {
         const item = document.createElement('div');
-        item.className = 'leaderboard-item';
+        item.className = 'list-group-item';
         const rankSpan = document.createElement('span');
+        rankSpan.className = 'fw-semibold';
         rankSpan.textContent = '#' + (index + 1) + ' - ' + entry.date;
         const scoreSpan = document.createElement('span');
-        scoreSpan.innerHTML = '<strong>' + entry.score + '</strong> pts';
+        scoreSpan.className = 'badge bg-primary';
+        scoreSpan.textContent = entry.score + ' pts';
         item.appendChild(rankSpan);
         item.appendChild(scoreSpan);
         listEl.appendChild(item);
@@ -378,21 +340,26 @@ window.updateGlobalLeaderboard = function() {
         listEl.innerHTML = '';
         
         if (scores.length === 0) {
-            listEl.innerHTML = '<div class="loading-state">No global scores yet. Be the first!</div>';
+            listEl.innerHTML = '<div class="text-center text-muted py-4">No global scores yet. Be the first!</div>';
             return;
         }
         
         scores.forEach(function(entry, index) {
             const item = document.createElement('div');
-            item.className = 'leaderboard-item';
+            item.className = 'list-group-item';
             if (entry.playerId === window.MultiplayerService.playerId) {
                 item.classList.add('your-score');
             }
+            if (index === 0) {
+                item.classList.add('list-group-item');
+            }
             
             const rankSpan = document.createElement('span');
+            rankSpan.className = 'fw-semibold';
             rankSpan.textContent = '#' + (index + 1) + ' - Player ' + (entry.playerId ? entry.playerId.substr(7, 6) : 'Unknown');
             const scoreSpan = document.createElement('span');
-            scoreSpan.innerHTML = '<strong>' + entry.score + '</strong> pts';
+            scoreSpan.className = 'badge bg-primary';
+            scoreSpan.textContent = entry.score + ' pts';
             item.appendChild(rankSpan);
             item.appendChild(scoreSpan);
             listEl.appendChild(item);

@@ -21,150 +21,214 @@
     <meta property="twitter:description" content="I scored {SCORE} points! Can you beat me?">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    
     <script src="multiplayer.js"></script>
 </head>
 <body>
-    <div class="connection-indicator" id="connectionIndicator">
-        <span class="indicator-dot" id="indicatorDot"></span>
-        <span id="connectionText">Connecting...</span>
+    <!-- Connection Status Badge -->
+    <div class="connection-badge position-fixed top-0 end-0 m-3" id="connectionIndicator">
+        <span class="badge bg-transparent border border-light px-3 py-2">
+            <span class="indicator-dot me-2" id="indicatorDot"></span>
+            <span id="connectionText" class="small">Connecting...</span>
+        </span>
     </div>
 
-    <div class="app-container">
-        <header class="app-header">
-            <div class="header-content">
-                <h1 class="game-title">
-                    <span class="title-icon">🎨</span>
-                    <span class="title-text">Color Match</span>
-                </h1>
-                <div class="header-badges">
-                    <div class="badge online-badge">
-                        <span class="badge-icon">🌍</span>
-                        <span class="badge-text" id="onlineCount">0</span>
-                    </div>
-                    <div class="badge rank-badge">
-                        <span class="badge-icon">🏆</span>
-                        <span class="badge-text" id="globalRank">#-</span>
+    <div class="container-fluid px-3 py-2" style="max-width: 600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column;">
+        
+        <!-- Header -->
+        <header class="mb-3">
+            <div class="card border-0 shadow-lg bg-gradient-primary">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-2">
+                            <h1 class="h3 mb-0 fw-bold text-white">🎨 Color Match</h1>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-light bg-opacity-25 text-white border border-light border-opacity-50 px-2 py-1">
+                                <i class="bi bi-globe"></i> <span id="onlineCount">0</span>
+                            </span>
+                            <span class="badge bg-warning bg-opacity-75 text-dark border-0 px-2 py-1">
+                                <i class="bi bi-trophy"></i> <span id="globalRank">#-</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <main class="game-main">
-            <div class="stats-container">
-                <div class="stat-card score-card">
-                    <div class="stat-icon">⭐</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Score</div>
-                        <div class="stat-value" id="score">0</div>
+        <!-- Main Game Area -->
+        <main class="flex-grow-1 d-flex flex-column gap-2" style="min-height: 0;">
+            
+            <!-- Stats Row -->
+            <div class="row g-2">
+                <div class="col-4">
+                    <div class="card border-0 shadow h-100 stat-card">
+                        <div class="card-body text-center p-2">
+                            <div class="text-muted small mb-1">SCORE</div>
+                            <div class="h4 mb-0 fw-bold text-primary" id="score">0</div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card best-card">
-                    <div class="stat-icon">👑</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Best</div>
-                        <div class="stat-value" id="bestScore">0</div>
+                <div class="col-4">
+                    <div class="card border-0 shadow h-100 stat-card">
+                        <div class="card-body text-center p-2">
+                            <div class="text-muted small mb-1">BEST</div>
+                            <div class="h4 mb-0 fw-bold text-warning" id="bestScore">0</div>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card time-card">
-                    <div class="stat-icon">⏱️</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Time</div>
-                        <div class="stat-value" id="timer">30</div>
+                <div class="col-4">
+                    <div class="card border-0 shadow h-100 stat-card timer-card">
+                        <div class="card-body text-center p-2">
+                            <div class="text-muted small mb-1">TIME</div>
+                            <div class="h4 mb-0 fw-bold text-success" id="timer">30</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="target-container">
-                <div class="target-header">
-                    <span class="target-label">Find This Color</span>
-                </div>
-                <div class="target-color-wrapper">
-                    <div class="target-glow-effect"></div>
-                    <div class="target-color-box" id="targetColor"></div>
-                    <div class="target-badge-icon">🎯</div>
+            <!-- Target Color Section -->
+            <div class="card border-0 shadow-lg bg-gradient-primary">
+                <div class="card-body text-center p-3">
+                    <div class="text-white-50 small mb-2 fw-semibold text-uppercase">Find This Color</div>
+                    <div class="position-relative d-inline-block">
+                        <div class="target-glow"></div>
+                        <div class="target-color-box rounded-4 border border-4 border-white shadow-lg" id="targetColor" style="width: 100px; height: 100px;"></div>
+                        <div class="position-absolute top-0 start-100 translate-middle">
+                            <span class="badge bg-danger rounded-circle p-2">🎯</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="game-grid-wrapper">
-                <div class="color-grid" id="colorGrid"></div>
+            <!-- Color Grid -->
+            <div class="card border-0 shadow-lg flex-grow-1" style="min-height: 250px;">
+                <div class="card-body h-100 d-flex align-items-center justify-content-center p-3">
+                    <div class="w-100 h-100 d-grid gap-2" style="grid-template-columns: repeat(3, 1fr);" id="colorGrid"></div>
+                </div>
             </div>
 
-            <div class="action-buttons">
-                <button class="action-btn primary-btn" id="startBtn">
-                    <span class="btn-icon">▶</span>
-                    <span class="btn-label">Start Game</span>
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-lg fw-bold shadow-lg" id="startBtn">
+                    <i class="bi bi-play-fill me-2"></i>Start Game
                 </button>
-                <button class="action-btn secondary-btn" id="shareBtn" style="display: none;">
-                    <span class="btn-icon">📤</span>
-                    <span class="btn-label">Share Score</span>
+                <button class="btn btn-danger btn-lg fw-bold shadow-lg" id="shareBtn" style="display: none;">
+                    <i class="bi bi-share-fill me-2"></i>Share Score
                 </button>
             </div>
 
-            <div class="game-feedback" id="message"></div>
+            <!-- Game Feedback -->
+            <div class="alert alert-dismissible fade show mb-0" id="message" role="alert" style="display: none;">
+                <span id="messageText"></span>
+            </div>
+
         </main>
 
-        <footer class="app-footer">
-            <button class="footer-btn" id="leaderboardBtn">
-                <span class="footer-icon">🏆</span>
-                <span class="footer-text">Leaderboard</span>
+        <!-- Footer -->
+        <footer class="mt-2">
+            <button class="btn btn-outline-light w-100 fw-semibold shadow" id="leaderboardBtn">
+                <i class="bi bi-trophy-fill me-2"></i>Leaderboard
             </button>
         </footer>
+
     </div>
 
     <!-- Leaderboard Modal -->
-    <div class="modal-overlay" id="leaderboardModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>🏆 Global Leaderboard</h2>
-                <button class="modal-close" id="closeLeaderboard">✕</button>
-            </div>
-            <div class="modal-tabs">
-                <button class="modal-tab active" data-tab="global">Global</button>
-                <button class="modal-tab" data-tab="local">Your Best</button>
-            </div>
-            <div class="modal-body">
-                <div class="leaderboard-content active" id="globalLeaderboard">
-                    <div class="loading-state">Loading global scores...</div>
+    <div class="modal fade" id="leaderboardModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient-primary text-white border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-trophy-fill me-2"></i>Global Leaderboard
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="leaderboard-content" id="localLeaderboard">
-                    <div id="localLeaderboardList"></div>
+                <div class="modal-body p-0">
+                    <ul class="nav nav-tabs border-0 px-3 pt-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-semibold" id="global-tab" data-bs-toggle="tab" data-bs-target="#global" type="button" role="tab">
+                                <i class="bi bi-globe me-1"></i>Global
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-semibold" id="local-tab" data-bs-toggle="tab" data-bs-target="#local" type="button" role="tab">
+                                <i class="bi bi-person-fill me-1"></i>Your Best
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" style="max-height: 400px; overflow-y: auto;">
+                        <div class="tab-pane fade show active" id="global" role="tabpanel">
+                            <div id="globalLeaderboard">
+                                <div class="text-center text-muted py-4">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                    Loading global scores...
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="local" role="tabpanel">
+                            <div id="localLeaderboardList"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Share Modal -->
-    <div class="modal-overlay" id="shareModal">
-        <div class="modal-content share-modal">
-            <div class="modal-header">
-                <h2>🎉 Share Your Score!</h2>
-                <button class="modal-close" id="closeShare">✕</button>
-            </div>
-            <div class="modal-body">
-                <p class="share-score-text">You scored <strong id="shareScoreValue">0</strong> points!</p>
-                <div class="share-buttons-grid">
-                    <a href="#" class="share-button twitter" id="twitterShare" target="_blank">
-                        <span class="share-icon">🐦</span>
-                        <span>Twitter</span>
-                    </a>
-                    <a href="#" class="share-button facebook" id="facebookShare" target="_blank">
-                        <span class="share-icon">📘</span>
-                        <span>Facebook</span>
-                    </a>
-                    <a href="#" class="share-button whatsapp" id="whatsappShare" target="_blank">
-                        <span class="share-icon">💬</span>
-                        <span>WhatsApp</span>
-                    </a>
-                    <button class="share-button copy" id="copyShare">
-                        <span class="share-icon">📋</span>
-                        <span>Copy Link</span>
-                    </button>
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-gradient-primary text-white border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-share-fill me-2"></i>Share Your Score!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <p class="h5 mb-4">
+                        You scored <strong class="text-primary" id="shareScoreValue">0</strong> points!
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <a href="#" class="btn btn-outline-primary w-100 py-3" id="twitterShare" target="_blank">
+                                <i class="bi bi-twitter fs-4 d-block mb-1"></i>
+                                <small>Twitter</small>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="#" class="btn btn-outline-primary w-100 py-3" id="facebookShare" target="_blank">
+                                <i class="bi bi-facebook fs-4 d-block mb-1"></i>
+                                <small>Facebook</small>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="#" class="btn btn-outline-success w-100 py-3" id="whatsappShare" target="_blank">
+                                <i class="bi bi-whatsapp fs-4 d-block mb-1"></i>
+                                <small>WhatsApp</small>
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-info w-100 py-3" id="copyShare">
+                                <i class="bi bi-clipboard fs-4 d-block mb-1"></i>
+                                <small>Copy Link</small>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
