@@ -3,49 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Color Match 🎨 - Speed Challenge</title>
-    <meta name="description" content="🎨 Color Match - Test your speed! Match colors as fast as you can. Play now!">
+    <title>Color Match 🎨 - Global Speed Challenge</title>
+    
+    <meta name="description" content="🎨 Color Match - Test your speed! Match colors and compete globally. Can you reach #1?">
+    <meta name="keywords" content="color game, speed challenge, reaction game, viral game, multiplayer game">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://friday-night-colors.netlify.app/">
+    <meta property="og:title" content="🎨 Color Match - Can You Beat My Score?">
+    <meta property="og:description" content="I scored {SCORE} points! Can you beat me? Play now and compete globally!">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://friday-night-colors.netlify.app/">
+    <meta property="twitter:title" content="🎨 Color Match - Can You Beat My Score?">
+    <meta property="twitter:description" content="I scored {SCORE} points! Can you beat me?">
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
     <link rel="stylesheet" href="style.css">
+    <script src="multiplayer.js"></script>
 </head>
 <body>
-    <div class="app">
-        <header class="header">
-            <h1>🎨 Color Match</h1>
-            <div class="header-stats">
-                <div class="mini-stat">
-                    <span class="mini-label">Best</span>
-                    <span class="mini-value" id="bestScore">0</span>
+    <div class="connection-indicator" id="connectionIndicator">
+        <span class="indicator-dot" id="indicatorDot"></span>
+        <span id="connectionText">Connecting...</span>
+    </div>
+
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="game-title">
+                    <span class="title-icon">🎨</span>
+                    <span class="title-text">Color Match</span>
+                </h1>
+                <div class="header-badges">
+                    <div class="badge online-badge">
+                        <span class="badge-icon">🌍</span>
+                        <span class="badge-text" id="onlineCount">0</span>
+                    </div>
+                    <div class="badge rank-badge">
+                        <span class="badge-icon">🏆</span>
+                        <span class="badge-text" id="globalRank">#-</span>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <main class="main-content">
-            <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-label">Score</div>
-                    <div class="stat-value" id="score">0</div>
+        <main class="game-main">
+            <div class="stats-container">
+                <div class="stat-card score-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Score</div>
+                        <div class="stat-value" id="score">0</div>
+                    </div>
                 </div>
-                <div class="stat timer">
-                    <div class="stat-label">Time</div>
-                    <div class="stat-value" id="timer">30</div>
+                <div class="stat-card best-card">
+                    <div class="stat-icon">👑</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Best</div>
+                        <div class="stat-value" id="bestScore">0</div>
+                    </div>
+                </div>
+                <div class="stat-card time-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Time</div>
+                        <div class="stat-value" id="timer">30</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="target-section">
-                <div class="target-label">Find This Color</div>
-                <div class="target-color" id="targetColor"></div>
+            <div class="target-container">
+                <div class="target-header">
+                    <span class="target-label">Find This Color</span>
+                </div>
+                <div class="target-color-wrapper">
+                    <div class="target-glow-effect"></div>
+                    <div class="target-color-box" id="targetColor"></div>
+                    <div class="target-badge-icon">🎯</div>
+                </div>
             </div>
 
-            <div class="color-grid" id="colorGrid"></div>
-
-            <div class="controls">
-                <button class="btn btn-primary" id="startBtn">▶ Start Game</button>
-                <button class="btn btn-secondary" id="shareBtn" style="display: none;">📤 Share</button>
+            <div class="game-grid-wrapper">
+                <div class="color-grid" id="colorGrid"></div>
             </div>
 
-            <div class="message" id="message"></div>
+            <div class="action-buttons">
+                <button class="action-btn primary-btn" id="startBtn">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-label">Start Game</span>
+                </button>
+                <button class="action-btn secondary-btn" id="shareBtn" style="display: none;">
+                    <span class="btn-icon">📤</span>
+                    <span class="btn-label">Share Score</span>
+                </button>
+            </div>
+
+            <div class="game-feedback" id="message"></div>
         </main>
+
+        <footer class="app-footer">
+            <button class="footer-btn" id="leaderboardBtn">
+                <span class="footer-icon">🏆</span>
+                <span class="footer-text">Leaderboard</span>
+            </button>
+        </footer>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div class="modal-overlay" id="leaderboardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏆 Global Leaderboard</h2>
+                <button class="modal-close" id="closeLeaderboard">✕</button>
+            </div>
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="global">Global</button>
+                <button class="modal-tab" data-tab="local">Your Best</button>
+            </div>
+            <div class="modal-body">
+                <div class="leaderboard-content active" id="globalLeaderboard">
+                    <div class="loading-state">Loading global scores...</div>
+                </div>
+                <div class="leaderboard-content" id="localLeaderboard">
+                    <div id="localLeaderboardList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal-overlay" id="shareModal">
+        <div class="modal-content share-modal">
+            <div class="modal-header">
+                <h2>🎉 Share Your Score!</h2>
+                <button class="modal-close" id="closeShare">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="share-score-text">You scored <strong id="shareScoreValue">0</strong> points!</p>
+                <div class="share-buttons-grid">
+                    <a href="#" class="share-button twitter" id="twitterShare" target="_blank">
+                        <span class="share-icon">🐦</span>
+                        <span>Twitter</span>
+                    </a>
+                    <a href="#" class="share-button facebook" id="facebookShare" target="_blank">
+                        <span class="share-icon">📘</span>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="#" class="share-button whatsapp" id="whatsappShare" target="_blank">
+                        <span class="share-icon">💬</span>
+                        <span>WhatsApp</span>
+                    </a>
+                    <button class="share-button copy" id="copyShare">
+                        <span class="share-icon">📋</span>
+                        <span>Copy Link</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
