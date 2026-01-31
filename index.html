@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Color Match 🎨 - Speed Challenge</title>
+    <meta name="description" content="🎨 Color Match - Test your speed! Match colors as fast as you can. Play now!">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <h1>🎨 Color Match</h1>
+            <div class="header-stats">
+                <div class="mini-stat">
+                    <span class="mini-label">Best</span>
+                    <span class="mini-value" id="bestScore">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-label">Score</div>
+                    <div class="stat-value" id="score">0</div>
+                </div>
+                <div class="stat timer">
+                    <div class="stat-label">Time</div>
+                    <div class="stat-value" id="timer">30</div>
+                </div>
+            </div>
+
+            <div class="target-section">
+                <div class="target-label">Find This Color</div>
+                <div class="target-color" id="targetColor"></div>
+            </div>
+
+            <div class="color-grid" id="colorGrid"></div>
+
+            <div class="controls">
+                <button class="btn btn-primary" id="startBtn">▶ Start Game</button>
+                <button class="btn btn-secondary" id="shareBtn" style="display: none;">📤 Share</button>
+            </div>
+
+            <div class="message" id="message"></div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
