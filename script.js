@@ -53,11 +53,17 @@ function setupShareButtons() {
 function updateShareLinks() {
     const gameUrl = 'https://friday-night-colors.netlify.app/';
     const shareText = '🎨 I scored ' + score + ' points in Color Match! Can you beat me? 🎯\n\nPlay now: ' + gameUrl;
-    const twitterText = encodeURIComponent('🎨 I scored ' + score + ' points in Color Match! Can you beat me? 🎯\n\nPlay now: ' + gameUrl);
+    const encodedText = encodeURIComponent('🎨 I scored ' + score + ' points in Color Match! Can you beat me? 🎯\n\nPlay now: ' + gameUrl);
+    const encodedUrl = encodeURIComponent(gameUrl);
     
-    document.getElementById('twitterShare').href = 'https://twitter.com/intent/tweet?text=' + twitterText;
-    document.getElementById('facebookShare').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(gameUrl);
-    document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+    // Instagram - use Instagram story deep link
+    document.getElementById('instagramShare').href = 'instagram://story?backgroundImage=' + encodedUrl;
+    
+    // TikTok - use TikTok deep link
+    document.getElementById('tiktokShare').href = 'tiktok://share?text=' + encodedText;
+    
+    // WhatsApp
+    document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + encodedText;
 }
 
 function copyToClipboard(text) {
