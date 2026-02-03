@@ -56,11 +56,29 @@ function updateShareLinks() {
     const encodedText = encodeURIComponent('🎨 I scored ' + score + ' points in Color Match! Can you beat me? 🎯\n\nPlay now: ' + gameUrl);
     const encodedUrl = encodeURIComponent(gameUrl);
     
-    // Instagram - use Instagram story deep link
-    document.getElementById('instagramShare').href = 'instagram://story?backgroundImage=' + encodedUrl;
+    // Instagram - use web URL as fallback
+    const instagramBtn = document.getElementById('instagramShare');
+    instagramBtn.href = 'https://www.instagram.com/';
+    instagramBtn.onclick = function(e) {
+        e.preventDefault();
+        // Try to open Instagram app first, then fallback to web
+        window.location.href = 'instagram://camera';
+        setTimeout(() => {
+            window.open('https://www.instagram.com/', '_blank');
+        }, 1000);
+    };
     
-    // TikTok - use TikTok deep link
-    document.getElementById('tiktokShare').href = 'tiktok://share?text=' + encodedText;
+    // TikTok - use web URL as fallback
+    const tiktokBtn = document.getElementById('tiktokShare');
+    tiktokBtn.href = 'https://www.tiktok.com/';
+    tiktokBtn.onclick = function(e) {
+        e.preventDefault();
+        // Try to open TikTok app first, then fallback to web
+        window.location.href = 'tiktok://upload';
+        setTimeout(() => {
+            window.open('https://www.tiktok.com/', '_blank');
+        }, 1000);
+    };
     
     // WhatsApp
     document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + encodedText;
@@ -189,8 +207,6 @@ function startGame() {
     const startBtn = document.getElementById('startBtn');
     startBtn.innerHTML = '<i class="bi bi-pause-fill me-2"></i>Running...';
     startBtn.disabled = true;
-    const shareBtn = document.getElementById('shareBtn');
-    shareBtn.style.display = 'none';
     
     generateColors();
     showMessage('🚀 Game Started!', 'success');
@@ -226,8 +242,6 @@ function endGame() {
     const startBtn = document.getElementById('startBtn');
     startBtn.innerHTML = '<i class="bi bi-play-fill me-2"></i>Play Again';
     startBtn.disabled = false;
-    const shareBtn = document.getElementById('shareBtn');
-    shareBtn.style.display = 'block';
     
     if (score > bestScore) {
         bestScore = score;
