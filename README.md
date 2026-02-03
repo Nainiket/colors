@@ -19,6 +19,8 @@ A fast-paced color matching game that tests your speed and accuracy!
 
 ## 🌐 Live Site
 
+🔗 **Play Now:** [https://friday-night-colors.netlify.app/](https://friday-night-colors.netlify.app/)
+
 Deployed on Netlify - Free tier hosting
 
 ## 🛠️ Tech Stack
