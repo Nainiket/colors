@@ -73,6 +73,22 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
+.stat-card .text-primary {
+    color: #ffffff !important;
+}
+
+.stat-card .text-warning {
+    color: #ffffff !important;
+}
+
+.stat-card .text-success {
+    color: #ffffff !important;
+}
+
+.stat-card .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
 .timer-card .text-success {
     animation: pulse-timer 1s infinite;
 }

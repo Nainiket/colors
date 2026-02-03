@@ -54,34 +54,59 @@ function updateShareLinks() {
     const gameUrl = 'https://friday-night-colors.netlify.app/';
     const shareText = '🎨 I scored ' + score + ' points in Color Match! Can you beat me? 🎯\n\nPlay now: ' + gameUrl;
     const encodedText = encodeURIComponent('🎨 I scored ' + score + ' points in Color Match! Can you beat me? 🎯\n\nPlay now: ' + gameUrl);
-    const encodedUrl = encodeURIComponent(gameUrl);
     
     // Instagram - use web URL as fallback
     const instagramBtn = document.getElementById('instagramShare');
-    instagramBtn.href = 'https://www.instagram.com/';
-    instagramBtn.onclick = function(e) {
-        e.preventDefault();
-        // Try to open Instagram app first, then fallback to web
-        window.location.href = 'instagram://camera';
-        setTimeout(() => {
-            window.open('https://www.instagram.com/', '_blank');
-        }, 1000);
-    };
+    if (instagramBtn) {
+        instagramBtn.onclick = function(e) {
+            e.preventDefault();
+            // Try to open Instagram app first, then fallback to web
+            const appUrl = 'instagram://camera';
+            const webUrl = 'https://www.instagram.com/';
+            
+            // Try app first
+            const appWindow = window.open(appUrl, '_blank');
+            
+            // Fallback to web after 1 second
+            setTimeout(() => {
+                if (appWindow && appWindow.closed) {
+                    window.open(webUrl, '_blank');
+                } else {
+                    window.open(webUrl, '_blank');
+                }
+            }, 1000);
+        };
+    }
     
     // TikTok - use web URL as fallback
     const tiktokBtn = document.getElementById('tiktokShare');
-    tiktokBtn.href = 'https://www.tiktok.com/';
-    tiktokBtn.onclick = function(e) {
-        e.preventDefault();
-        // Try to open TikTok app first, then fallback to web
-        window.location.href = 'tiktok://upload';
-        setTimeout(() => {
-            window.open('https://www.tiktok.com/', '_blank');
-        }, 1000);
-    };
+    if (tiktokBtn) {
+        tiktokBtn.onclick = function(e) {
+            e.preventDefault();
+            // Try to open TikTok app first, then fallback to web
+            const appUrl = 'tiktok://upload';
+            const webUrl = 'https://www.tiktok.com/';
+            
+            // Try app first
+            const appWindow = window.open(appUrl, '_blank');
+            
+            // Fallback to web after 1 second
+            setTimeout(() => {
+                if (appWindow && appWindow.closed) {
+                    window.open(webUrl, '_blank');
+                } else {
+                    window.open(webUrl, '_blank');
+                }
+            }, 1000);
+        };
+    }
     
     // WhatsApp
-    document.getElementById('whatsappShare').href = 'https://wa.me/?text=' + encodedText;
+    const whatsappBtn = document.getElementById('whatsappShare');
+    if (whatsappBtn) {
+        whatsappBtn.href = 'https://wa.me/?text=' + encodedText;
+        whatsappBtn.onclick = null; // Remove any existing onclick
+    }
 }
 
 function copyToClipboard(text) {
